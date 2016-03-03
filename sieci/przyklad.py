@@ -3,7 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import operator
 
-G = nx.read_gexf('l.gexf', relabel=True)
+G = nx.read_gexf('data/l.gexf', relabel=True)
 G = G.to_undirected()
 d = nx.edge_betweenness_centrality(G)
 for (k, v) in d.items():
