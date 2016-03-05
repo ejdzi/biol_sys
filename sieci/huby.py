@@ -1,5 +1,7 @@
 # coding=utf-8
 from collections import defaultdict
+from copy import copy
+
 import matplotlib.pyplot as mtp
 import statistics as stat
 
@@ -57,3 +59,23 @@ with open('output/output3.csv', 'w') as plik:
 #             lol[i] = lol[i].union(lol[sasiad])
 #         if len(lol[i]) == ilosc:
 #             yolo = False
+lol = interact
+
+
+def dodaj_wszystkie_osiagalne(do_czego, z_czego):
+    for i in z_czego:
+        if i not in lol[do_czego]:
+            lol[do_czego].add(i)
+            dodaj_wszystkie_osiagalne(do_czego, lol[i])
+
+
+for k in lol.keys():
+    for v in copy(lol[k]):
+        dodaj_wszystkie_osiagalne(k, lol[v])
+with open('output/output_dodatek.csv', 'w') as plik:
+    for (k, v) in lol:
+        print k, ':', v
+        plik.write(str(k) + ';')
+        for i in v:
+            plik.write(str(i))
+        plik.write('\n')
