@@ -10,5 +10,5 @@ for (k, v) in d.items():
     print k, v
 print 'Max', max(d.iteritems(), key=operator.itemgetter(1))
 print 'Min', min(d.iteritems(), key=operator.itemgetter(1))
-# nx.draw(G, with_labels=True)
-# plt.show()
+nx.draw(G, with_labels=True)
+plt.show()
