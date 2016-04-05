@@ -2,7 +2,8 @@
 from math import sqrt
 
 import networkx as nx
-import sets
+
+from BCD.TreeMaker import maketree
 
 
 def add_betweenness(graf):
@@ -17,8 +18,8 @@ def add_communality(graf):
         node2 = edge[1]
         neighbaours1 = nx.all_neighbors(graf, node1)
         neighbaours2 = nx.all_neighbors(graf, node2)
-        set1 = sets.Set(neighbaours1)
-        set2 = sets.Set(neighbaours2)
+        set1 = set(neighbaours1)
+        set2 = set(neighbaours2)
         k = len(set1.intersection(set2))
         n = len(set1)
         m = len(set2)
@@ -50,18 +51,15 @@ def remove_edges(graf):
     return deleted_edges
 
 
-def buduj_drzewo(usuniete_krawedzie):
-    pass
-
-
 def rysuj_drzewo(drzewo):
+    # todo Janek, weź daj tą swoją funkcję!!!
     pass
 
 
 def run(filename):
     graf = load_graph(filename)
     usuniete_krawedzie = remove_edges(graf)
-    drzewo = buduj_drzewo(usuniete_krawedzie)
+    drzewo = maketree(usuniete_krawedzie)
     rysuj_drzewo(drzewo)
 
 
