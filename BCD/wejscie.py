@@ -8,7 +8,7 @@ from TreeMaker import maketree
 from ete2 import Tree, TreeStyle, NodeStyle
 from random import choice
 from copy import deepcopy
-from scipy.special import comb
+from scipy.misc import comb
 
 
 def add_betweenness(graf):
