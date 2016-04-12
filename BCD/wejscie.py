@@ -13,7 +13,6 @@ from scipy.misc import comb
 a = 0
 
 
-
 def add_betweenness(graf):
     b_dict = nx.edge_betweenness_centrality(graf)
     print "bet", a
@@ -115,6 +114,59 @@ def remove_edges(graf):
         add_betweenness(graf)
     return deleted_edges
 
+###szybszy sposób
+def lazy_remove_edges(graf):
+    deleted_edges = []
+    while nx.number_of_edges(graf) != 0:
+        max_edge = None
+        max_bc = 0
+        for edge in graf.edges():
+            bc = graf[edge[0]][edge[1]]['bet'] / graf[edge[0]][edge[1]]['com']
+            if bc >= max_bc:
+                max_edge = edge
+        deleted_edges.append(max_edge)
+        graf.remove_edge(max_edge[0], max_edge[1])
+        #no betweenness recalculation
+    return deleted_edges
+
+
+###gorszy sposób
+def bad_remove_edges(graf):
+    deleted_edges = []
+    while nx.number_of_edges(graf) != 0:
+        max_edge = None
+        max_bc = 0
+        for edge in graf.edges():
+            bc = graf[edge[0]][edge[1]]['bet'] / graf[edge[0]][edge[1]]['com']
+            if bc >= max_bc:
+                max_edge = edge
+        deleted_edges.append(max_edge)
+        if max_edge:
+            graf.remove_edge(max_edge[0], max_edge[1])
+        add_betweenness(graf)
+        add_communality(graf) #added commonality recalculation
+    return deleted_edges
+
+###wagi
+def weight_remove_edges(graf):
+    deleted_edges = []
+    while nx.number_of_edges(graf) != 0:
+        max_edge = None
+        max_bc = 0
+        for edge in graf.edges():
+            try:
+                weight =graf[edge[0]][edge[1]]['weight']
+            except:
+                weight = 1
+            bc = weight * graf[edge[0]][edge[1]]['bet'] / graf[edge[0]][edge[1]]['com'] #multiplies in a 'weight' edge parameter
+            if bc >= max_bc:
+                max_edge = edge
+        deleted_edges.append(max_edge)
+        if max_edge:
+            graf.remove_edge(max_edge[0], max_edge[1])
+        add_betweenness(graf)
+    return deleted_edges
+
 
 def color():
     k = "#"
@@ -192,9 +244,12 @@ def run(filename):
     graf = load_graph(filename)
     graf_copy = deepcopy(graf)
     # remove_p_value(graf)
-    usuniete_krawedzie = remove_edges(graf)
+    # usuniete_krawedzie = remove_edges(graf)
+    # usuniete_krawedzie = lazy_remove_edges(graf)
+    # usuniete_krawedzie = bad_remove_edges(graf)
+    usuniete_krawedzie = weight_remove_edges(graf)
     drzewo = maketree(usuniete_krawedzie)
     find_modules_and_draw_tree(drzewo, graf_copy)
 
 
-run('u.gexf')
+run('u6.gexf')
