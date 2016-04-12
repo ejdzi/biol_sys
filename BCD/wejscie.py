@@ -13,6 +13,7 @@ from scipy.misc import comb
 a = 0
 
 
+
 def add_betweenness(graf):
     b_dict = nx.edge_betweenness_centrality(graf)
     print "bet", a
