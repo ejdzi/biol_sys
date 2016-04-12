@@ -8,16 +8,20 @@ from TreeMaker import maketree
 from ete2 import Tree, TreeStyle, NodeStyle
 from random import choice
 from copy import deepcopy
-from scipy.special import comb
+from scipy.misc import comb
+
+a = 0
 
 
 def add_betweenness(graf):
     b_dict = nx.edge_betweenness_centrality(graf)
+    print "bet", a
     nx.set_edge_attributes(graf, 'bet', b_dict)
 
 
 def add_communality(graf):
     comminity = {}
+    print "add", a
     for edge in graf.edges_iter():
         node1 = edge[0]
         node2 = edge[1]
@@ -67,7 +71,7 @@ def add_p_value(graf):
 def remove_p_value(graf):
     stop = True
     while stop:
-        max_p_value = -0.01
+        max_p_value = -0.001
         max_edge = None
         for edge in graf.edges():
             if graf[edge[0]][edge[1]]['p_value'] > max_p_value:
@@ -77,15 +81,18 @@ def remove_p_value(graf):
             stop = False
         else:
             graf.remove_edge(max_edge[0], max_edge[1])
+        print stop
         add_p_value(graf)
 
 
 def load_graph(filename):
     graf = nx.read_gexf(filename, relabel=True)
     graf = graf.to_undirected()
+    print "load", a
     add_betweenness(graf)
     add_communality(graf)
     add_p_value(graf)
+    print graf
     return graf
 
 
@@ -96,9 +103,13 @@ def remove_edges(graf):
         max_bc = 0
         for edge in graf.edges():
             bc = graf[edge[0]][edge[1]]['bet'] / graf[edge[0]][edge[1]]['com']
-            if bc > max_bc:
+            if bc >= max_bc:
                 max_edge = edge
         deleted_edges.append(max_edge)
+        # print max_edge[0], max_edge[1]
+        global a
+        a += 1
+        print "remove", a
         graf.remove_edge(max_edge[0], max_edge[1])
         add_betweenness(graf)
     return deleted_edges
@@ -153,6 +164,7 @@ def find_modules_and_draw_tree(drzewo, graph):
         return False
 
     while True:
+        j = False
         breakkk = False
         for i in modules:
             if breakkk: break
@@ -178,10 +190,10 @@ def find_modules_and_draw_tree(drzewo, graph):
 def run(filename):
     graf = load_graph(filename)
     graf_copy = deepcopy(graf)
-    remove_p_value(graf)
+    # remove_p_value(graf)
     usuniete_krawedzie = remove_edges(graf)
     drzewo = maketree(usuniete_krawedzie)
     find_modules_and_draw_tree(drzewo, graf_copy)
 
 
-run('l.gexf')
+run('u.gexf')
