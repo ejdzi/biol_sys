@@ -43,7 +43,7 @@ def maketree(el, nl=None):
 
 def form_pre_generated_list():
     global cos2
-    with open('lista.txt', 'r') as file:
+    with open('input/lista.txt', 'r') as file:
         cos = file.read()
         cos2 = ast.literal_eval(cos)  # this is the script to take out the list from the file
     maketree(cos2)

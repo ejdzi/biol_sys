@@ -252,4 +252,4 @@ def run(filename):
     find_modules_and_draw_tree(drzewo, graf_copy)
 
 
-run('u6.gexf')
+run('input/u6.gexf')
