@@ -47,5 +47,3 @@ def form_pre_generated_list():
         cos = file.read()
         cos2 = ast.literal_eval(cos)  # this is the script to take out the list from the file
     maketree(cos2)
-
-

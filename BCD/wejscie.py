@@ -15,13 +15,13 @@ a = 0
 
 def add_betweenness(graf):
     b_dict = nx.edge_betweenness_centrality(graf)
-    print "bet", a
+    print "Adding betweenness"
     nx.set_edge_attributes(graf, 'bet', b_dict)
 
 
-def add_communality(graf):
-    comminity = {}
-    print "add", a
+def add_commonality(graf):
+    commonality = {}
+    print "Adding commonality", a
     for edge in graf.edges_iter():
         node1 = edge[0]
         node2 = edge[1]
@@ -33,8 +33,8 @@ def add_communality(graf):
         n = len(set1)
         m = len(set2)
         com = (k + 1) / (sqrt(n * m))
-        comminity[edge] = com
-    nx.set_edge_attributes(graf, "com", comminity)
+        commonality[edge] = com
+    nx.set_edge_attributes(graf, "com", commonality)
 
 
 def prob(N, k, n, m):
@@ -88,9 +88,8 @@ def remove_p_value(graf):
 def load_graph(filename):
     graf = nx.read_gexf(filename, relabel=True)
     graf = graf.to_undirected()
-    print "load", a
     add_betweenness(graf)
-    add_communality(graf)
+    add_commonality(graf)
     add_p_value(graf)
     print graf
     return graf
@@ -109,61 +108,8 @@ def remove_edges(graf):
         # print max_edge[0], max_edge[1]
         global a
         a += 1
-        print "remove", a
+        print "Removing", a
         graf.remove_edge(max_edge[0], max_edge[1])
-        add_betweenness(graf)
-    return deleted_edges
-
-###szybszy sposób
-def lazy_remove_edges(graf):
-    deleted_edges = []
-    while nx.number_of_edges(graf) != 0:
-        max_edge = None
-        max_bc = 0
-        for edge in graf.edges():
-            bc = graf[edge[0]][edge[1]]['bet'] / graf[edge[0]][edge[1]]['com']
-            if bc >= max_bc:
-                max_edge = edge
-        deleted_edges.append(max_edge)
-        graf.remove_edge(max_edge[0], max_edge[1])
-        #no betweenness recalculation
-    return deleted_edges
-
-
-###gorszy sposób
-def bad_remove_edges(graf):
-    deleted_edges = []
-    while nx.number_of_edges(graf) != 0:
-        max_edge = None
-        max_bc = 0
-        for edge in graf.edges():
-            bc = graf[edge[0]][edge[1]]['bet'] / graf[edge[0]][edge[1]]['com']
-            if bc >= max_bc:
-                max_edge = edge
-        deleted_edges.append(max_edge)
-        if max_edge:
-            graf.remove_edge(max_edge[0], max_edge[1])
-        add_betweenness(graf)
-        add_communality(graf) #added commonality recalculation
-    return deleted_edges
-
-###wagi
-def weight_remove_edges(graf):
-    deleted_edges = []
-    while nx.number_of_edges(graf) != 0:
-        max_edge = None
-        max_bc = 0
-        for edge in graf.edges():
-            try:
-                weight =graf[edge[0]][edge[1]]['weight']
-            except:
-                weight = 1
-            bc = weight * graf[edge[0]][edge[1]]['bet'] / graf[edge[0]][edge[1]]['com'] #multiplies in a 'weight' edge parameter
-            if bc >= max_bc:
-                max_edge = edge
-        deleted_edges.append(max_edge)
-        if max_edge:
-            graf.remove_edge(max_edge[0], max_edge[1])
         add_betweenness(graf)
     return deleted_edges
 
@@ -244,10 +190,10 @@ def run(filename):
     graf = load_graph(filename)
     graf_copy = deepcopy(graf)
     # remove_p_value(graf)
-    # usuniete_krawedzie = remove_edges(graf)
+    usuniete_krawedzie = remove_edges(graf)
     # usuniete_krawedzie = lazy_remove_edges(graf)
     # usuniete_krawedzie = bad_remove_edges(graf)
-    usuniete_krawedzie = weight_remove_edges(graf)
+    # usuniete_krawedzie = weight_remove_edges(graf)
     drzewo = maketree(usuniete_krawedzie)
     find_modules_and_draw_tree(drzewo, graf_copy)
 
